@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
         BrowserAnimationsModule,
         CommonModules,
         AppRoutingModule,
-        RouterModule.forRoot(routes, { useHash: true })
+        // RouterModule.forRoot(routes, { useHash: true })
     ],
     declarations: [AppComponent],
     bootstrap: [AppComponent]

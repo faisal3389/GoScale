@@ -37,7 +37,7 @@ export class ProfileComponent implements OnInit {
                         this.address = this.userProfile.address;
                         //console.log("addressfrom Oninit = ",  this.address.room)
                     }
-                    this.userMobile = this.userProfile.userMobile;  
+                    this.userMobile = this.userProfile.phone;  
                 }
                 if(data.userAds.ads){
                     //console.log("ads=", data.userAds.ads);
@@ -63,11 +63,11 @@ export class ProfileComponent implements OnInit {
             let dialogRef = this.dialog.open(UserMobileDialog, {
             width: '380px',
             height: '250px',
-            data: { entity: this.userProfile.userMobile, name:this.userProfile.firstName, checkForField:this.checkForField }
+            data: { entity: this.userProfile.phone, name:this.userProfile.name, checkForField:this.checkForField }
             });
 
             dialogRef.afterClosed().subscribe(userMobile => {
-                this.userProfile.userMobile = userMobile;
+                this.userProfile.phone = userMobile;
                 this.updateUserProfileUserMobile(this.userProfile);
             });
         }
@@ -131,7 +131,7 @@ export class ProfileComponent implements OnInit {
         //         });
         // }
         updateUserProfileUserMobile(userProfile: User){
-            this.newUserForMobileUpdate.userMobile = userProfile.userMobile;
+            this.newUserForMobileUpdate.phone = userProfile.phone;
             this.newUserForMobileUpdate.userId = userProfile.userId;
             this.profileService.updateUserMobile(this.newUserForMobileUpdate)
             .then((res)=>{

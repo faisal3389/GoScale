@@ -1,6 +1,6 @@
 export class ServerConstants {
-    public static DOMAIN = "http://ec2-35-154-15-217.ap-south-1.compute.amazonaws.com:8080/";
-    public static APP_NAME = "campushaatAPI/";
+    public static DOMAIN = "http://localhost:8080/";
+    public static APP_NAME = "goscaletest/";
     // public static PORT = "80/";
     public static APP_URL = ServerConstants.DOMAIN + ServerConstants.APP_NAME;
     public static APP_APIS = ServerConstants.APP_URL + "webapi/";

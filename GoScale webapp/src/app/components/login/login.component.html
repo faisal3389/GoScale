@@ -1,7 +1,7 @@
 <div class="login-container">
 <div class="login-header text-center">
-    <h4>Login to your Account</h4>
-    <p>Enter now to your account and start buying and selling!</p>
+    <h4>Login/Register</h4>
+    <p></p>
 </div>
 <div class="col-md-8 col-md-offset-2">
     <div class="row">
@@ -9,13 +9,13 @@
         <div id="forlogin">
             <div class="col-md-12">
                 <mat-form-field>
-                    <input  matInput type="text" placeholder="User Name" id="username" [(ngModel)]="username" name="username" required=""/>
+                    <input  matInput type="text" placeholder="Email Id" id="username" [(ngModel)]="username" name="username" required>
                 </mat-form-field>
             </div>
             <div class="col-md-12">
                 <div>
                     <mat-form-field>
-                        <input matInput type="password" placeholder="Password" id="password" type="password" name="password" [(ngModel)]="password" required=""/>
+                        <input matInput type="password" placeholder="Password" id="password" type="password" name="password" [(ngModel)]="password" required>
                     </mat-form-field>
                 </div>
                 <div *ngIf="err">
@@ -31,51 +31,63 @@
             </div>
         </div>
     </form>
-        <div id="forforgot">
+
+    
+    <div id="forforgot">
+        <form (submit)="save(otpModal)" #basicInfoForm="ngForm">
             <div class="col-md-12">
                 <mat-form-field>
-                    <input  matInput type="email" placeholder="Email" id="emailforgot" name="emailforgot" >
+                    <input  matInput type="email" placeholder="Email" id="emailforgot" name="emailforgot" [(ngModel)]="otpmail" required>
                 </mat-form-field>
             </div>
             <div class="col-md-12">
                 <a class="pull-right" (click)="forexistinguser()">Remember your Password?</a>
             </div>
             <div class="col-md-12 text-center">
-                <button class="btn loginBut">Send Password</button>
+                <button class="btn loginBut" type= "submit">Send OTP</button>
             </div>
-        </div>
+        </form>
+    </div>
     <form  ngNativeValidate #registerForm="ngForm">
         <div id="fornewuser">
             <div class="col-md-6">
                 <mat-form-field>
-                    <input  matInput type="text" placeholder="First Name" id="firstname" name="firstname" [(ngModel)]="registeredUser.firstName" >
+                    <input  matInput type="text" placeholder="Full Name" id="firstname" name="firstname" [(ngModel)]="registeredUser.name" required>
                 </mat-form-field>
             </div>
             <div class="col-md-6">
                 <mat-form-field>
-                    <input  matInput type="text" placeholder="Last Name" id="lastname" name="lastname" [(ngModel)]="registeredUser.lastName" >
+                    <input  matInput type="number" placeholder="Mobile" id="mobile" name="mobile" [(ngModel)]="registeredUser.phone"  required>
                 </mat-form-field>
             </div>
             <div class="col-md-6">
                 <mat-form-field>
-                    <input  matInput type="tel" placeholder="Mobile" id="mobile" name="mobile" [(ngModel)]="registeredUser.userMobile"  >
+                    <input  matInput type="email" placeholder="Email" id="email" name="email" [(ngModel)]="registeredUser.email" required >
                 </mat-form-field>
             </div>
             <div class="col-md-6">
                 <mat-form-field>
-                    <input  matInput type="email" placeholder="Email" id="email" name="email" [(ngModel)]="registeredUser.userEmail"  >
+                    <input  matInput type="password" placeholder="password" id="registerpassword" name="password" [(ngModel)]="registeredUser.password" required>
                 </mat-form-field>
             </div>
             <div class="col-md-6">
                 <mat-form-field>
-                    <input  matInput type="password" placeholder="password" id="registerpassword" name="password" [(ngModel)]="registeredUser.password" >
+                    <input  matInput type="password" placeholder="Confirm Password" id="confirmpassword" name="confirm password" required>
                 </mat-form-field>
             </div>
             <div class="col-md-6">
                 <mat-form-field>
-                    <input  matInput type="password" placeholder="Confirm Password" id="confirmpassword" name="confirm password" >
+                    <input  matInput [matDatepicker]="picker" placeholder="Date of Birth" id="dob" name="password" [(ngModel)]="registeredUser.Dob" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
-            </div><div class="col-md-6">
+            </div>
+            <div class="col-md-6">
+                <mat-form-field>
+                    <input  matInput type="text" placeholder="Please Enter FB link" id="fblink" name="fblink" [(ngModel)]="registeredUser.fbProfileLink" required>
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
                 <!--<mat-radio-group class="example-radio-group" >
                     <mat-radio-button class="example-radio-button" [(ngModel)]="favoriteSeason" [value]="season">
                         <mat-radio-button  name="gender" [(ngModel)]="user.userSex" >
@@ -99,10 +111,42 @@
         </div>
     </form>
     </div>
-    <legend><span>or</span></legend>
-    <div class="col-md-12 text-center">
-        <button class="btn  md-icon-button" (click)="loginWithFacebook()">Facebook</button>
-        <button #googleContainer id="google-login-button" class="btn btn-primary" (click)="signIn()">Google Sign-In</button>
-    </div>
 </div>   
+</div>
+
+<div bsModal #otpModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Verify OTP</h4>
+                <button type="button" class="close pull-right" (click)="otpModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>A verification code sent on your registered no
+                    <strong> ({{otpmail}}) </strong>
+                </p>
+                <form (submit)="verifyOtp(otpModal)" #verifyOtpForm="ngForm" class="form-horizontal">
+                    <div class="form-group row">
+                        <label for="otp" class="col-lg-3 col-md-3 col-sm-3 text-right">{{otpErrorMsg}}</label>
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <input type="text" class="form-control" id="otp" [(ngModel)]="otp" name="otp" placeholder="OTP" required="">
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3">
+                            <!--<a class="btn btn-default glyphicon glyphicon-hand-up pull-right">Resend OTP</a>-->
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-offset-4">
+                            <button type="submit" class="btn btn-default">Verify</button>
+                            <button type="button" class="btn btn-default col-md-offset-1" aria-label="Cancel" (click)="otpModal.hide()">Cancel</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

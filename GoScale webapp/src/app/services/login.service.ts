@@ -25,6 +25,12 @@ export class LoginService {
     register(user : User){
         return this.restClient.post(ServerConstants.REGISTER, user);
     }
+    sendOtpOnMail(email: string){
+        return this.restClient.get(ServerConstants.REGISTER+"/sendOTPonMail?email="+email);
+    }
+    verifyOtp(email:string, otp:string){
+        return this.restClient.get(ServerConstants.REGISTER+"/verifyOTPonMail?email="+email+"&otp="+otp);
+    }
 }
 /*
 Copyright 2016 Google Inc. All Rights Reserved.

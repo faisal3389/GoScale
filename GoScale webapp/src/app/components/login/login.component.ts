@@ -1,7 +1,7 @@
 // Exact copy except import UserService from core
 import { Component, OnInit, NgZone, Inject, Input, Output, EventEmitter, AfterViewInit, ViewChild } from '@angular/core';
 import { LoginService } from '../../services/login.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Form, FormControl, Validators } from '@angular/forms';
 import { FacebookService, InitParams, LoginResponse, LoginOptions, AuthResponse } from 'ngx-facebook';
 //import { AuthService, AppGlobals } from 'angular2-google-login';
@@ -16,7 +16,7 @@ import { ServerConstants } from "app/constants/server.constants";
     selector: 'app-login',
     templateUrl: 'login.component.html'
 })
-export class LoginComponent implements OnInit, AfterViewInit {
+export class LoginComponent implements OnInit {
     username: string = null;
     password: string = null;
     err: boolean = false;
@@ -25,29 +25,24 @@ export class LoginComponent implements OnInit, AfterViewInit {
     public auth2: any;
     variableForExistingUser:string = "login";
     registeredUser:User;
-
-    @ViewChild('googleContainer') googleContainer: any;
-    @Input() styles: any;
-    @Input() text: string = 'Google';
-    @Input() apiKey: string;
-    @Output() onSignIn = new EventEmitter<any>();
-    @Output() onRefreshToken = new EventEmitter<any>();
-    @Output() onSignOut = new EventEmitter<boolean>();
-    @Output() onDisconnect = new EventEmitter<boolean>();
+    otpmail: string;
+    otp: string;
+    otpErrorMsg: string;
+    requestSubmitted: boolean;
+    
     constructor(private loginService: LoginService,/* private auth: AuthService,*/
-        private router: Router, private fb: FacebookService, private provider: GoogleSignInProviderService
-        , private zone: NgZone, public dialogRef: MatDialogRef<LoginComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
+        private router: Router,private route: ActivatedRoute, private fb: FacebookService, private provider: GoogleSignInProviderService
+        ) {
         this.socialResponse = new SocialResponse();
         this.user = new User();
         this.registeredUser = new User();
         const initParams: InitParams = {
             appId: '336247160225608',
             xfbml: true,
-            version: 'v2.8',
-
+            version: 'v2.8',  
         };
-
+        this.otpErrorMsg = "Please enter OTP";
+        this.requestSubmitted = false;
         fb.init(initParams);
         provider.init('257674144755-qmb21bi7fikke198gi4cdfongmjdvqit.apps.googleusercontent.com')
     }
@@ -55,8 +50,19 @@ export class LoginComponent implements OnInit, AfterViewInit {
       //  if(this.variableForExistingUser=="login"){
            this.loginService.login(this.username, this.password)
                .then(res => {
-                this.buildUserByServerResponseAndCloseDialog(res.json().user);
-                window.location.reload();
+                // this.buildUserByServerResponseAndCloseDialog(res.json().user);
+                //window.location.reload();
+                if(res.json().baseResponse.statusCode==200){ 
+                console.log(res);
+                this.router.navigate(['user/loggedin'], {
+                    relativeTo: this.route.parent.parent
+                    });
+                }
+                else{
+                     this.router.navigate(['invalid'], {
+                        relativeTo: this.route.parent.parent
+                    });
+                }
             }).catch((err) => {
 
             });
@@ -68,33 +74,58 @@ export class LoginComponent implements OnInit, AfterViewInit {
     register(){
          this.loginService.register(this.registeredUser)
             .then(res => {
-                console.log("registeruser=", this.registeredUser);
-                this.buildUserByServerResponseAndCloseDialog(this.registeredUser);
-                window.location.reload();
+                if(res.json().baseResponse.statusCode==200){
+                    this.router.navigate(['user/registered'], {
+                    relativeTo: this.route.parent.parent
+                    });
+                }
+                localStorage.setItem('username', this.registeredUser.name);
             }).catch((err) => {
 
             });  
     }
+    save(modal) {
+        this.loginService.sendOtpOnMail(this.otpmail)
+            .then((res) => {
+                console.log(res)
+                //var otp = res.json().baseResponse.message;
+                //if (res.json().baseResponse.message=="200") {
+                    modal.show();
+                //}
+                //this.router.navigate(['user/registered'], { relativeTo: this.route.parent.parent });
+            })
+            .catch((err) => {
+                console.log("Error while processsing otp request");
+            });
+    }
+    handleSuccess(response) {
+        this.requestSubmitted = true;
+    }
+    // sendOtp() {
+    //     return this.loginService.sendOtpOnMail(this.otpmail);
+    // }
+    verifyOtp(modal) {
+        this.otpErrorMsg = "Verifying...";
+        this.loginService.verifyOtp(this.otpmail, this.otp)
+            .then((success) => {
+                this.router.navigate(['change-password'], {
+                    relativeTo: this.route.parent.parent
+                });
+            })
+            .catch((err) => {
+                this.otpErrorMsg = "Oops! wrong OTP!";
+            })
+            ;
+    }
+    handleErr(err) {
+        console.log(err);
+    }
+    cancel() {
+        console.log("Cancelled by user");
+    }
 
     forexistinguser() {
         this.variableForExistingUser = "login";
-         //console.log("login=", this.variableForExistingUser);
-         //(<HTMLInputElement>document.getElementById("fornewuser")).required = false;
-        //  (<HTMLInputElement>document.getElementById("firstname")).required = false;
-        //  (<HTMLInputElement>document.getElementById("lastname")).required = false;
-        //  (<HTMLInputElement>document.getElementById("mobile")).required = false;
-        //  (<HTMLInputElement>document.getElementById("email")).required = false;
-        //  (<HTMLInputElement>document.getElementById("emailforgot")).required = false;
-        //  (<HTMLInputElement>document.getElementById("registerpassword")).required = false;
-        //  (<HTMLInputElement>document.getElementById("confirmpassword")).required = false;
-        //  (<HTMLInputElement>document.getElementsByName("firstname")).required = false;
-        //  (<HTMLInputElement>document.getElementById("lastname")).required = false;
-        //  (<HTMLInputElement>document.getElementById("mobile")).required = false;
-        //  (<HTMLInputElement>document.getElementById("email")).required = false;
-        //  (<HTMLInputElement>document.getElementById("emailforgot")).required = false;
-        //  (<HTMLInputElement>document.getElementById("registerpassword")).required = false;
-        //  (<HTMLInputElement>document.getElementById("confirmpassword")).required = false;
-        document.getElementById('fornewuser').style.display = 'none';
         document.getElementById('forforgot').style.display = 'none';
         document.getElementById('forlogin').style.display = 'block';
     }
@@ -102,21 +133,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
     fornewuser() {
         this.variableForExistingUser = "register";
          console.log("register=", this.variableForExistingUser);
-        // (<HTMLInputElement>document.getElementById("username")).required = false;
-        // (<HTMLInputElement>document.getElementById("password")).required = false;
-        // (<HTMLInputElement>document.getElementById("emailforgot")).required = false; 
         document.getElementById('fornewuser').style.display = 'block';
         document.getElementById('forforgot').style.display = 'none';
         document.getElementById('forlogin').style.display = 'none';
     }
     forforgot() {
-        //  (<HTMLInputElement>document.getElementById("firstname")).required = false;
-        //  (<HTMLInputElement>document.getElementById("lastname")).required = false;
-        //  (<HTMLInputElement>document.getElementById("mobile")).required = false;
-        //  (<HTMLInputElement>document.getElementById("email")).required = false;
-        //  (<HTMLInputElement>document.getElementById("emailforgot")).required = false;
-        //  (<HTMLInputElement>document.getElementById("registerpassword")).required = false;
-        //  (<HTMLInputElement>document.getElementById("confirmpassword")).required = false;
         document.getElementById('fornewuser').style.display = 'none';
         document.getElementById('forforgot').style.display = 'block';
         document.getElementById('forlogin').style.display = 'none';
@@ -134,10 +155,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
                     + authResponse.accessToken)
                     .then((res) => {
                         this.buildSocialResponseFacebook(res);
-                        this.user = this.buildUserByFacebookAuthResponse(this.socialResponse);
+                        //this.user = this.buildUserByFacebookAuthResponse(this.socialResponse);
                         this.loginService.socialLogin(this.user)
                             .then((res: any) => {
-                              this.buildUserByServerResponseAndCloseDialog(res.json().user);
+                            //   this.buildUserByServerResponseAndCloseDialog(res.json().user);
                             }).catch((err) => {
 
                             });
@@ -163,40 +184,14 @@ export class LoginComponent implements OnInit, AfterViewInit {
         return this.socialResponse;
     }
     googleAuthenticate() {
-        /*  this.auth.authenticateUser((result) => {
-              if (result === true) {
-                  this.getData();
-  
-                  this.user = this.buildUserByGoogleAuthResponse(this.socialResponse);
-  
-                  this.loginService.socialLogin(this.user)
-                      .then((res) => {
-                         this.buildUserByServerResponseAndCloseDialog(res.json().user);
-  
-                      }).catch((err) => {
-  
-                      });
-              }
-          });*/
-
-    }
-    buildUserByServerResponseAndCloseDialog(user: User) {
-        if (this.user !== null && this.user !== undefined) {
-            this.user.userId = user.userId;
-            this.user.userType = user.userType;
-            this.user.userCampusList = localStorage.getItem('campus');
-            /***** set user id in local storage */
-            localStorage.setItem('userId', this.user.userId);
-            this.dialogRef.close(this.user);
-        }
     }
     buildUserByFacebookAuthResponse(socialResponse: SocialResponse) {
-        this.user.firstName = socialResponse.first_name;
-        this.user.lastName = socialResponse.last_name;
-        this.user.userEmail = socialResponse.email;
-        this.user.userType = '4';
-        this.user.userImage = socialResponse.imageURL;
-        return this.user;
+        // this.user.firstName = socialResponse.first_name;
+        // this.user.lastName = socialResponse.last_name;
+        // this.user.userEmail = socialResponse.email;
+        // this.user.userType = '4';
+        // this.user.userImage = socialResponse.imageURL;
+        // return this.user;
     }
 
     /**
@@ -245,24 +240,24 @@ export class LoginComponent implements OnInit, AfterViewInit {
     public disconnect() {
 
     }
-    ngAfterViewInit() {
-        this.provider.computeGoogleSignInElement(this.googleContainer.nativeElement)
-            .subscribe((data: any) => {
-                // var temp = data;
-                this.buildUserByGoogleAuthResponse(data);
+    // ngAfterViewInit() {
+    //     this.provider.computeGoogleSignInElement(this.googleContainer.nativeElement)
+    //         .subscribe((data: any) => {
+    //             // var temp = data;
+    //             this.buildUserByGoogleAuthResponse(data);
 
-         });
-    }
+    //      });
+    // }
     buildUserByGoogleAuthResponse(response: any) {
         if (response && response.w3) {
-            let userGoogledata = response.w3;
-            this.user.firstName = userGoogledata.ig.split(' ')[0];
-            this.user.lastName = userGoogledata.ig.split(' ')[1];
-            this.user.userEmail = userGoogledata.U3;
-            this.user.userType = '4';
-            this.user.userImage = userGoogledata.Paa;
-            this.saveUserDetailsAndLogin();
-            return this.user;
+            // let userGoogledata = response.w3;
+            // this.user.firstName = userGoogledata.ig.split(' ')[0];
+            // this.user.lastName = userGoogledata.ig.split(' ')[1];
+            // this.user.userEmail = userGoogledata.U3;
+            // this.user.userType = '4';
+            // this.user.userImage = userGoogledata.Paa;
+            // this.saveUserDetailsAndLogin();
+            // return this.user;
         }
         this.user = null;
         this.saveUserDetailsAndLogin();
@@ -272,7 +267,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     saveUserDetailsAndLogin() {
         this.loginService.socialLogin(this.user)
             .then((res) => {
-               this.buildUserByServerResponseAndCloseDialog(res.json().user);
+            //    this.buildUserByServerResponseAndCloseDialog(res.json().user);
             }).catch((err) => {
 
         });
