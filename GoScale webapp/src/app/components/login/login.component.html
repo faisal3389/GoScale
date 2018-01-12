@@ -1,0 +1,108 @@
+<div class="login-container">
+<div class="login-header text-center">
+    <h4>Login to your Account</h4>
+    <p>Enter now to your account and start buying and selling!</p>
+</div>
+<div class="col-md-8 col-md-offset-2">
+    <div class="row">
+    <form  ngNativeValidate #loginForm="ngForm">
+        <div id="forlogin">
+            <div class="col-md-12">
+                <mat-form-field>
+                    <input  matInput type="text" placeholder="User Name" id="username" [(ngModel)]="username" name="username" required=""/>
+                </mat-form-field>
+            </div>
+            <div class="col-md-12">
+                <div>
+                    <mat-form-field>
+                        <input matInput type="password" placeholder="Password" id="password" type="password" name="password" [(ngModel)]="password" required=""/>
+                    </mat-form-field>
+                </div>
+                <div *ngIf="err">
+                    Invalid username or password
+                </div>
+            </div>
+            <div class="col-md-12">
+                <a class="pull-left" (click)="forforgot()">Forgot your password?</a>
+                <a class="pull-right" (click)="fornewuser()">New User</a>
+            </div>
+            <div class="col-md-12 text-center">
+                <button type ="submit" class="btn loginBut" (click)="login()">Login</button>
+            </div>
+        </div>
+    </form>
+        <div id="forforgot">
+            <div class="col-md-12">
+                <mat-form-field>
+                    <input  matInput type="email" placeholder="Email" id="emailforgot" name="emailforgot" >
+                </mat-form-field>
+            </div>
+            <div class="col-md-12">
+                <a class="pull-right" (click)="forexistinguser()">Remember your Password?</a>
+            </div>
+            <div class="col-md-12 text-center">
+                <button class="btn loginBut">Send Password</button>
+            </div>
+        </div>
+    <form  ngNativeValidate #registerForm="ngForm">
+        <div id="fornewuser">
+            <div class="col-md-6">
+                <mat-form-field>
+                    <input  matInput type="text" placeholder="First Name" id="firstname" name="firstname" [(ngModel)]="registeredUser.firstName" >
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field>
+                    <input  matInput type="text" placeholder="Last Name" id="lastname" name="lastname" [(ngModel)]="registeredUser.lastName" >
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field>
+                    <input  matInput type="tel" placeholder="Mobile" id="mobile" name="mobile" [(ngModel)]="registeredUser.userMobile"  >
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field>
+                    <input  matInput type="email" placeholder="Email" id="email" name="email" [(ngModel)]="registeredUser.userEmail"  >
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field>
+                    <input  matInput type="password" placeholder="password" id="registerpassword" name="password" [(ngModel)]="registeredUser.password" >
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field>
+                    <input  matInput type="password" placeholder="Confirm Password" id="confirmpassword" name="confirm password" >
+                </mat-form-field>
+            </div><div class="col-md-6">
+                <!--<mat-radio-group class="example-radio-group" >
+                    <mat-radio-button class="example-radio-button" [(ngModel)]="favoriteSeason" [value]="season">
+                        <mat-radio-button  name="gender" [(ngModel)]="user.userSex" >
+                            Male
+                        </mat-radio-button>
+                        <mat-radio-button  name="gender"  [(ngModel)]="user.userSex" >
+                            Female
+                        </mat-radio-button>
+                </mat-radio-group>-->
+                <!--<input type="radio" name="group2" [checked]="registeredUser.userSex==1" (change)="$event.target.checked ? registeredUser.userSex=1: registeredUser.userSex= -1"> Male
+                    <br>
+                    <input type="radio" name="group2" [checked]="registeredUser.userSex==2" (change)="$event.target.checked ? registeredUser.userSex=2: registeredUser.userSex= -1"> Female
+                    <br>-->
+            </div>
+            <div class="col-md-12">
+                <a class="pull-right" (click)="forexistinguser()">Already an Existing User?</a>
+            </div>
+            <div class="col-md-12 text-center">
+                <button class="btn loginBut" (click)="register()">Sign Up</button>
+            </div>
+        </div>
+    </form>
+    </div>
+    <legend><span>or</span></legend>
+    <div class="col-md-12 text-center">
+        <button class="btn  md-icon-button" (click)="loginWithFacebook()">Facebook</button>
+        <button #googleContainer id="google-login-button" class="btn btn-primary" (click)="signIn()">Google Sign-In</button>
+    </div>
+</div>   
+</div>

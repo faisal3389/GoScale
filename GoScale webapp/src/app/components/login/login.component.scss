@@ -1,0 +1,65 @@
+
+    md-form-field {
+        width: 100%;
+    }
+    .login-header {
+        width: 100%;
+        margin-bottom: 15px;
+        background-color: #2196F3;
+        color: #fff;
+    }
+    .login-header h4 {
+        margin: 0; 
+        padding-top: 20px; 
+        font-size: 25px; 
+        font-weight: bold;
+        color: #fff;
+    }
+    .login-header p {
+        padding-bottom: 20px; 
+        font-size: 16px; 
+        color: #fff;
+    }
+    a {
+        color: rgba(0,0,0,.6) !important;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all ease-in-out 0.3s;
+    }
+    a:hover {
+        color: #2196F3 !important;
+        text-decoration: none;
+    }
+    .loginBut{
+        width: 100%;
+        background-color: #2196F3;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 15px;
+    }
+    legend{
+        margin: 20px 0;
+        position: relative;
+    }
+    legend span{
+        width: 30px;
+        background-color: #fff;
+        color: rgba(0,0,0,.4);
+        position: absolute;
+        left: 50%;
+        top: -16px;
+        text-align: center;
+    }
+    #fornewuser, #forforgot{
+        display: none;
+    }
+    #forlogin > div > .mat-form-field {
+        width: 300px;
+    }
+    #forlogin > div > div > .mat-form-field {
+        width: 300px;
+    }
+input{
+    color: black;
+}
