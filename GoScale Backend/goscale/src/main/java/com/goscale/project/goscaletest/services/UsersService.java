@@ -14,6 +14,12 @@ public class UsersService {
 		UsersDao usersDao = new UsersDao();
 		return usersDao.checkLogin(email, password, connection);
 	}
+	
+	public void updatePassword(String email, String password) throws Exception{
+		Connection connection = getConnection();
+		UsersDao usersDao = new UsersDao();
+		usersDao.updatePassword(email, password, connection);
+	}
 	private Connection getConnection() throws Exception {
 		DbConnection dbConnection=new DbConnection();
 		Connection connection = dbConnection.getConnection();

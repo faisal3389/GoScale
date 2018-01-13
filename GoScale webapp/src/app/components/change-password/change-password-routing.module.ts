@@ -9,7 +9,7 @@ const routes: Routes = [
     {
         path: '', component: ChangePasswordComponent,
         children: [
-            { path: 'login', component: ChangePasswordComponent }
+            { path: ':email/change-password', component: ChangePasswordComponent }
         ]
     }
 ];

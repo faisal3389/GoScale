@@ -53,4 +53,13 @@ public class UsersResource {
 		UsersService usersService = new UsersService();
 		return usersService.userProfile(userId);
 	}
+
+	@GET
+	@Path("/updatePassword")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void updatePassword(@QueryParam("email") String email, 
+						@QueryParam("password") String password) throws Exception{
+		UsersService usersService = new UsersService();
+		usersService.updatePassword(email, password);
+	}
 }

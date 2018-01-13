@@ -4,13 +4,11 @@ import { FormsModule } from '@angular/forms';
 
 import { AwesomePipe } from './awesome.pipe';
 import { HighlightDirective } from './highlight.directive';
-import { AdResponse } from '../models/ad-response.model';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 @NgModule({
     imports: [CommonModule],
     declarations: [AwesomePipe, HighlightDirective],
     exports: [AwesomePipe, HighlightDirective,
-        CommonModule, FormsModule, InfiniteScrollModule]
+        CommonModule, FormsModule]
 })
 export class SharedModule {
 

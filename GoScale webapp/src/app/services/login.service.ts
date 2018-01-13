@@ -31,6 +31,9 @@ export class LoginService {
     verifyOtp(email:string, otp:string){
         return this.restClient.get(ServerConstants.REGISTER+"/verifyOTPonMail?email="+email+"&otp="+otp);
     }
+    chnagepassword(email:string, password:string){
+        return this.restClient.get(ServerConstants.REGISTER+"/updatePassword?email="+email+"&password="+password);
+    }
 }
 /*
 Copyright 2016 Google Inc. All Rights Reserved.

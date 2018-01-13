@@ -20,6 +20,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.goscale.project.goscaletest.models.BaseResponse;
 import com.goscale.project.goscaletest.models.UserResponse;
 import com.goscale.project.goscaletest.models.Users;
@@ -99,7 +101,96 @@ public class UsersDao {
 		}
 		return response;
 	}
-
+//	public UserResponse updateUser(String email,String password, Connection conn) throws Exception
+//	{
+//		Boolean insertStatus=false;
+//		BaseResponse baseResponse = new BaseResponse();
+//		UserResponse response = new UserResponse();
+//		Gson gson = new GsonBuilder().create();
+//		Users user = gson.fromJson(user_old, Users.class);
+//		PreparedStatement checkEmail = conn.prepareStatement("select * from user where "
+//				+ "emailId='"+email+"'");
+//		ResultSet emailResult = checkEmail.executeQuery();
+//		emailResult.beforeFirst();
+//		String userPassword=emailResult.getString("password");
+//		
+//		try{
+//			try{
+//				
+//				String query = "UPDATE user set name=" + "'" + user.getName()+ "',";
+//				if(user.getPassword()!=null){	// if password is empty don't update it
+//					query=query.concat("UPDATE user set  password=" + "'" + generateHash(user.getPassword())+ "',"+
+//							"modifiedDate=" + "now() where emailId="+user.getEmail());
+//				}
+////				query=query.concat("userCampus=" + "'" + user.getUserCampusList()+ "',"+
+////						"userSex=" + "'" + user.getUserSex()+ "',"+
+////						"imageUrl=" + "'" + url+ "',"+
+////						"modifiedDate=" + "now() where userId="+user.getUserId()
+////						);
+//				PreparedStatement updateQuery = conn.prepareStatement(query);
+//				System.out.print(updateQuery.toString());
+//				int result = updateQuery.executeUpdate();
+//				
+//			}catch (SQLException sqle) {
+//		            //sqle.printStackTrace();
+//		            throw sqle;
+//		        }
+//			}catch (Exception e) {
+//	            if (conn != null) {
+//	                conn.close();
+//	            }
+//	            throw e;
+//	        }finally {
+//	            if (conn != null) {
+//	                conn.close();
+//	            }
+//	        }
+//		if(insertStatus){
+//			baseResponse.setStatusCode(Constants.CH200);
+//			baseResponse.setMessage(Constants.USER_UPDATE_SUCCESS);
+//			response.setBaseResponse(baseResponse);
+//			response.setUser(user);
+//		}
+//		else {
+//			baseResponse.setStatusCode(Constants.CH500);
+//			baseResponse.setMessage(Constants.SERVER_ERROR);
+//			response.setBaseResponse(baseResponse);
+//		}
+//		return response;
+//	}
+	
+	public void updatePassword(String email,String password, Connection conn) throws Exception
+	{
+		String query = "";
+		String userPassword = "" ;
+		String userEmail = "";
+		try{
+			PreparedStatement checkEmail = conn.prepareStatement("select * from user where "
+					+ "emailId='"+email+"'");
+			ResultSet emailResult = checkEmail.executeQuery();
+			emailResult.beforeFirst();
+			while(emailResult.next()){
+				userPassword=emailResult.getString("password");
+				userEmail = emailResult.getString("emailId");
+			}
+			if(!userPassword.isEmpty()){	// if password is empty don't update it
+				query=query.concat("UPDATE user set  password=" + "'" + generateHash(password)+ "'"+" where emailId='"+email+"'");
+				PreparedStatement updateQuery = conn.prepareStatement(query);
+				int updatepassword = updateQuery.executeUpdate();
+			}
+			
+		}
+		catch (SQLException sqle) {
+            //sqle.printStackTrace();
+            throw sqle;
+        }
+		finally {
+            if (conn != null) {
+                conn.close();
+            }
+        }
+		
+	}
 
 	public UserResponse verifyOTP(String email, String otp, Connection conn) throws Exception
 	{
