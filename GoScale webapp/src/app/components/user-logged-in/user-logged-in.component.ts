@@ -8,8 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserLoggedInComponent implements OnInit {
    
+   username: string;
+   constructor(){
+        this.username = localStorage.getItem('username');
+   }
     ngOnInit() {
-       let userId = localStorage.getItem('username');
+       this.username = localStorage.getItem('username');
+       console.log("name = ", localStorage.getItem('username'))
     }
 
 }
